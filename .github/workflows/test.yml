@@ -34,18 +34,29 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           playwright install --with-deps
 
+      # Run backend tests with coverage enforcement
       - name: Run unit and integration tests
         run: |
-          pytest -m "not e2e" --cov=app --cov-report=term-missing
+          pytest tests/unit tests/integration --cov=app --cov-report=term-missing --cov-fail-under=90
 
+      # Run E2E browser tests separately (no coverage enforcement)
       - name: Run E2E browser tests
-        run: pytest -m "e2e"
+        run: |
+          pytest tests/e2e -m "e2e" --headed -v --no-cov
 
       - name: Generate coverage report
         run: pytest --cov=app --cov-report=html
@@ -104,6 +115,6 @@ jobs:
         with:
           push: true
           tags: |
-            nandanksingh/is601_assignment8:latest
-            nandanksingh/is601_assignment8:${{ github.sha }}
+            nandanksingh/module8_fastapi_calculator:latest
+            nandanksingh/module8_fastapi_calculator:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
