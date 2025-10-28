@@ -1,0 +1,42 @@
+# ----------------------------------------------------------
+# Author: Nandan Kumar
+# Date: 10/27/2025
+# Assignment-8: FastAPI Calculator
+# File: docker-compose.yml
+# ----------------------------------------------------------
+# Description:
+# Compose file for running the FastAPI Calculator app with one command.
+# Builds the image from the Dockerfile, maps ports, enables live reload,
+# and checks the container’s health automatically.
+# ----------------------------------------------------------
+
+version: "3.9"
+
+services:
+  fastapi-calculator:
+    container_name: fastapi-calculator
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nandanksingh/is601_assignment8:latest
+
+    ports:
+      - "8000:8000"                     # Map host 8000 → container 8000
+
+    environment:
+      - PYTHONUNBUFFERED=1              # Real-time logs
+      - PYTHONDONTWRITEBYTECODE=1       # Skip .pyc files
+
+    volumes:
+      - .:/app                          # Mount current folder for live reload
+
+    command: >
+      uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    restart: always                     # Auto-restart if stopped
