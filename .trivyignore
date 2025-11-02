@@ -1,1 +1,8 @@
-CVE-2024-6345
+# ----------------------------------------------------------
+# File: .trivyignore
+# Purpose: Ignore specific CVEs for known false positives
+# ----------------------------------------------------------
+
+# Currently no known CVEs ignored (all dependencies patched)
+# You may add CVEs below if necessary, e.g.:
+# CVE-2025-XXXX
