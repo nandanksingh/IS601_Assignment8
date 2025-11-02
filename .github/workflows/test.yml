@@ -65,7 +65,8 @@ jobs:
       - name: Run End-to-End (E2E) Tests (No Coverage Enforcement)
         run: |
           source venv/bin/activate
-          pytest -m e2e --disable-warnings
+          pytest -m e2e --no-cov --disable-warnings -v
+
 
   # --------------------------------------------------------
   #  SECURITY JOB — Docker vulnerability scanning
