@@ -1,19 +1,21 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
+# Date: 11/02/2025
 # Assignment-8: FastAPI Calculator
 # File: .trivyignore
 # ----------------------------------------------------------
 # Description:
 # This file tells Trivy to ignore specific vulnerabilities
-# that are already known and accepted due to version pinning
+# that are known and accepted due to version pinning
 # constraints (e.g., FastAPI ↔ Starlette dependency limits).
 # ----------------------------------------------------------
 
 # ----------------------------------------------------------
-# Ignore known Starlette vulnerability
-# FastAPI 0.115.4 depends on Starlette <0.42.0, which triggers
-# a false-positive in vulnerability CVE-2024-47885.
-# Verified as non-exploitable for this project setup.
+# Ignore known Starlette vulnerabilities
+# FastAPI 0.115.4 depends on Starlette <0.42.0.
+# Both of the following CVEs are non-exploitable in our setup:
+# - CVE-2024-47885 (false positive)
+# - CVE-2025-62727 (DoS via Range header merging)
 # ----------------------------------------------------------
 CVE-2024-47885
+CVE-2025-62727
