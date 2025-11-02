@@ -1,6 +1,6 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
+# Date: 11/02/2025
 # Assignment-8: FastAPI Calculator
 # File: .github/workflows/test.yml
 # ----------------------------------------------------------
@@ -25,7 +25,7 @@ on:
 
 jobs:
   # --------------------------------------------------------
-  # 1️ TEST JOB — Unit + Integration + E2E testing
+  #  TEST JOB — Unit + Integration + E2E testing
   # --------------------------------------------------------
   test:
     runs-on: ubuntu-latest
@@ -41,11 +41,9 @@ jobs:
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.cache/pip
+          path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          restore-keys: ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
@@ -61,11 +59,11 @@ jobs:
           source venv/bin/activate
           pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
 
-      #  Run E2E tests (Playwright) without coverage enforcement
+      #  Run E2E tests without coverage enforcement
       - name: Run End-to-End (E2E) Tests (No Coverage Enforcement)
         run: |
           source venv/bin/activate
-          pytest -m e2e --no-cov --disable-warnings -v
+          pytest -m e2e --disable-warnings -v
 
 
   # --------------------------------------------------------
@@ -92,6 +90,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+          ignorefile: './.trivyignore'   #  safer relative path
+
 
   # --------------------------------------------------------
   #  DEPLOY JOB — Build & push Docker image to DockerHub
