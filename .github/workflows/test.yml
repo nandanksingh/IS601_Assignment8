@@ -9,10 +9,10 @@
 # workflow for the FastAPI Calculator project.
 #
 # Workflow Stages:
-#   1. Run Unit + Integration + E2E tests automatically
-#   2. Enforce 90% minimum test coverage
-#   3. Scan Docker image for security vulnerabilities (Trivy)
-#   4. Build and push Docker image to DockerHub (main branch only)
+#   1. Run Unit + Integration tests (minimum 90% coverage)
+#   2. Run E2E Playwright tests (no coverage enforcement)
+#   3. Scan Docker image for vulnerabilities (Trivy)
+#   4. Build & push Docker image to DockerHub on main branch
 # ----------------------------------------------------------
 
 name: FastAPI Calculator CI/CD
@@ -25,7 +25,7 @@ on:
 
 jobs:
   # --------------------------------------------------------
-  #  TEST JOB — Unit, Integration, and E2E testing
+  # 1️ TEST JOB — Unit + Integration + E2E testing
   # --------------------------------------------------------
   test:
     runs-on: ubuntu-latest
@@ -55,15 +55,17 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps
 
+      #  Enforce 90% minimum coverage on Unit + Integration tests
       - name: Run Unit + Integration Tests with Coverage
         run: |
           source venv/bin/activate
           pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
 
-      - name: Run End-to-End (E2E) Tests
+      #  Run E2E tests (Playwright) without coverage enforcement
+      - name: Run End-to-End (E2E) Tests (No Coverage Enforcement)
         run: |
           source venv/bin/activate
-          pytest -m e2e
+          pytest -m e2e --disable-warnings
 
   # --------------------------------------------------------
   #  SECURITY JOB — Docker vulnerability scanning
