@@ -2,97 +2,127 @@
 # Author: Nandan Kumar
 # Date: 10/27/2025
 # Assignment-8: FastAPI Calculator
-# File: .github/workflows/ci.yml
+# File: .github/workflows/test.yml
 # ----------------------------------------------------------
 # Description:
 # Continuous Integration (CI) and Continuous Deployment (CD)
-# workflow for FastAPI Calculator.
-# 
-# Steps:
-#  Runs unit, integration, and E2E tests automatically.
-#  Scans Docker image for security vulnerabilities.
-#  Builds and deploys the Docker image to DockerHub.
+# workflow for the FastAPI Calculator project.
+#
+# Workflow Stages:
+#   1. Run Unit + Integration + E2E tests automatically
+#   2. Enforce 90% minimum test coverage
+#   3. Scan Docker image for security vulnerabilities (Trivy)
+#   4. Build and push Docker image to DockerHub (main branch only)
 # ----------------------------------------------------------
 
-name: CI/CD
+name: FastAPI Calculator CI/CD
 
 on:
- push:
-   branches: [ main ]
- pull_request:
-   branches: [ main ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
- test:
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v3
-     - uses: actions/setup-python@v4
-       with:
-         python-version: '3.10'
-         
-     - uses: actions/cache@v3
-       with:
-         path: |
-           venv
-           ~/.cache/pip
-         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-         restore-keys: |
-           ${{ runner.os }}-pip-
+  # --------------------------------------------------------
+  #  TEST JOB — Unit, Integration, and E2E testing
+  # --------------------------------------------------------
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-     - name: Install dependencies
-       run: |
-         python -m venv venv
-         source venv/bin/activate
-         pip install -r requirements.txt
-         playwright install
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-     - name: Run tests
-       run: |
-         source venv/bin/activate
-         pytest tests/unit/ --cov=src --junitxml=test-results/junit.xml
-         pytest tests/integration/
-         pytest tests/e2e/
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
- security:
-   needs: test
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v4
-     
-     - name: Build image
-       run: docker build -t app:test .
-     
-     - name: Run Trivy vulnerability scanner
-       uses: aquasecurity/trivy-action@master
-       with:
-         image-ref: 'app:test'
-         format: 'table'
-         exit-code: '1'
-         ignore-unfixed: true
-         severity: 'CRITICAL,HIGH'
+      - name: Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps
 
- deploy:
-   needs: security
-   if: github.ref == 'refs/heads/main'
-   runs-on: ubuntu-latest
-   environment: production
-   steps:
-     - uses: actions/checkout@v4
-     
-     - uses: docker/setup-buildx-action@v3
-     
-     - uses: docker/login-action@v3
-       with:
-         username: ${{ secrets.DOCKERHUB_USERNAME }}
-         password: ${{ secrets.DOCKERHUB_TOKEN }}
-         
-     - uses: docker/build-push-action@v5
-       with:
-         push: true
-         tags: |
-           nandanksingh/module8_fastapi_calculator:latest
-           nandanksingh/module8_fastapi_calculator:${{ github.sha }}
-         platforms: linux/amd64,linux/arm64
-         cache-from: type=registry,ref=nandanksingh/module8_fastapi_calculator:cache
-         cache-to: type=inline,mode=max
+      - name: Run Unit + Integration Tests with Coverage
+        run: |
+          source venv/bin/activate
+          pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
+
+      - name: Run End-to-End (E2E) Tests
+        run: |
+          source venv/bin/activate
+          pytest -m e2e
+
+  # --------------------------------------------------------
+  #  SECURITY JOB — Docker vulnerability scanning
+  # --------------------------------------------------------
+  security:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image for Security Scan
+        run: docker build -t fastapi-calculator:test .
+
+      - name: Run Trivy Vulnerability Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'fastapi-calculator:test'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  # --------------------------------------------------------
+  #  DEPLOY JOB — Build & push Docker image to DockerHub
+  # --------------------------------------------------------
+  deploy:
+    needs: security
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            nandanksingh/module8_fastapi_calculator:latest
+            nandanksingh/module8_fastapi_calculator:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=registry,ref=nandanksingh/module8_fastapi_calculator:cache
+          cache-to: type=inline,mode=max
+
+      - name: Verify DockerHub Push
+        run: docker pull nandanksingh/module8_fastapi_calculator:latest

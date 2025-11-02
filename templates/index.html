@@ -18,9 +18,6 @@
   <title>FastAPI Calculator</title>
 
   <style>
-    /* ----------------------------------------------------------
-       Global Page Styling
-       ---------------------------------------------------------- */
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -40,14 +37,6 @@
       text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
 
-    h2 {
-      color: #333333;
-      margin-bottom: 20px;
-    }
-
-    /* ----------------------------------------------------------
-       Calculator Box
-       ---------------------------------------------------------- */
     .calculator {
       background-color: #ffffff;
       border-radius: 12px;
@@ -76,9 +65,6 @@
       border-color: #4facfe;
     }
 
-    /* ----------------------------------------------------------
-       Colorful Buttons
-       ---------------------------------------------------------- */
     button {
       margin: 6px;
       padding: 8px 18px;
@@ -101,10 +87,7 @@
       transform: scale(1.05);
     }
 
-    /* ----------------------------------------------------------
-       Result Display
-       ---------------------------------------------------------- */
-    .result {
+    #result {
       margin-top: 20px;
       font-weight: bold;
       color: #333333;
@@ -124,8 +107,8 @@
     <h2>Enter Numbers and Choose Operation</h2>
 
     <!-- Input Fields -->
-    <input type="number" id="a" placeholder="Enter first number">
-    <input type="number" id="b" placeholder="Enter second number"><br>
+    <input type="text" id="a" placeholder="Enter first number">
+    <input type="text" id="b" placeholder="Enter second number"><br>
 
     <!-- Operation Buttons -->
     <button id="add" onclick="calculate('add')">Add</button>
@@ -134,21 +117,18 @@
     <button id="divide" onclick="calculate('divide')">Divide</button>
 
     <!-- Result Display -->
-    <div class="result" id="result">Result will appear here</div>
+    <div id="result">Result will appear here</div>
   </div>
 
   <script>
-    // ----------------------------------------------------------
-    // Function: calculate
-    // Sends input data to FastAPI and displays the result.
-    // ----------------------------------------------------------
     async function calculate(operation) {
-      const a = parseFloat(document.getElementById('a').value);
-      const b = parseFloat(document.getElementById('b').value);
+      const a = document.getElementById('a').value.trim();
+      const b = document.getElementById('b').value.trim();
       const resultBox = document.getElementById('result');
 
-      if (isNaN(a) || isNaN(b)) {
-        resultBox.innerText = "Please enter valid numbers.";
+      // Handle missing input
+      if (a === "" || b === "") {
+        resultBox.innerText = "Error: Missing input values.";
         resultBox.style.color = "#e74c3c";
         return;
       }
@@ -157,20 +137,20 @@
         const response = await fetch('/' + operation, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ a: a, b: b })
+          body: JSON.stringify({ a: parseFloat(a), b: parseFloat(b) })
         });
 
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok && data.result !== undefined) {
           resultBox.innerText = "Result: " + data.result;
           resultBox.style.color = "#2ecc71";
         } else {
-          resultBox.innerText = "Error: " + (data.error || "Invalid operation.");
+          resultBox.innerText = "Error: " + (data.error || "Invalid input.");
           resultBox.style.color = "#e74c3c";
         }
       } catch (error) {
-        resultBox.innerText = "Network error: " + error.message;
+        resultBox.innerText = "Error: Unable to connect to server.";
         resultBox.style.color = "#e74c3c";
       }
     }

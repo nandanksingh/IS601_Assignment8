@@ -1,204 +1,226 @@
-##  **Assignment 8 – FastAPI Calculator**
+## **Assignment 8 – FastAPI Calculator**
 
 **Author:** Nandan Kumar
 **Date:** October 27, 2025
 
 ---
 
-##  **Project Overview**
+## **Project Overview**
 
 This project implements a **FastAPI-based web calculator** that performs four basic arithmetic operations—**addition**, **subtraction**, **multiplication**, and **division**—through a modern web interface and RESTful API endpoints.
 
-It demonstrates the **full web development workflow**:
-from backend development and frontend integration to **automated testing**, **logging**, **version control**, and **continuous integration (CI)** using **GitHub Actions** and **Docker**.
+It demonstrates the **complete web development lifecycle**, from backend and frontend integration to **automated testing**, **logging**, **containerization**, and **continuous integration (CI)** using **GitHub Actions** and **Docker**.
 
 ---
 
-##  **Learning Objectives**
+## **Learning Objectives**
 
 Through this assignment, I learned to:
 
 * Develop a **FastAPI** web application with RESTful API endpoints
-* Integrate **frontend (HTML, CSS, JS)** with backend logic
+* Integrate **frontend (HTML, CSS, JavaScript)** with backend logic
 * Implement **unit**, **integration**, and **end-to-end (E2E)** testing using **Pytest** and **Playwright**
-* Add **structured logging** for debugging and transparency
-* Use **Git** and **GitHub** for version control
-* Set up **Continuous Integration** using **GitHub Actions**
-* Containerize the app using **Docker and docker-compose**
+* Add **structured logging** for monitoring and debugging
+* Manage version control using **Git and GitHub**
+* Automate workflows with **GitHub Actions**
+* Containerize and deploy the application using **Docker and Docker Compose**
 
 ---
 
-##  **Application Structure**
---------------------------------------------------------------------------------------------------- 
-| **app/operations.py**                            | Contains all arithmetic functions and validation logic. Includes error handling, logging, and numeric input verification. |
-| **app/**init**.py**                              | Initializes the `app` package and makes it importable within FastAPI.                                                     |
-| **templates/index.html**                         | Frontend calculator UI using HTML, CSS, and JavaScript. Sends API requests and dynamically displays results.              |
-| **tests/unit/test_calculator.py**                | Tests individual arithmetic functions to ensure correct mathematical behavior.                                            |
-| **tests/integration/test_fastapi_calculator.py** | Tests FastAPI API endpoints for addition, subtraction, multiplication, and division.                                      |
-| **tests/e2e/test_e2e.py**                        | Performs full browser-based End-to-End testing using Playwright to simulate user actions.                                 |
-| **Dockerfile**                                   | Defines how to build the Docker image for the FastAPI Calculator application.                                             |
-| **docker-compose.yml**                           | Manages and runs the FastAPI application inside a containerized environment.                                              |
-| **main.py**                                      | Entry point of the FastAPI application that serves both the frontend and backend APIs.                                    |
-| **pytest.ini**                                   | Configures Pytest options such as test paths, coverage threshold, and test markers.                                       |
-| **requirements.txt**                             | Lists all required dependencies for the project including FastAPI, Pytest, and Playwright.                                |
+## **Application Structure**
 
+| File                                             | Description                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| **app/operations.py**                            | Contains arithmetic functions and validation logic with error handling and logging. |
+| **templates/index.html**                         | Frontend calculator UI with JavaScript-based interaction.                           |
+| **tests/unit/test_calculator.py**                | Unit tests for arithmetic operations.                                               |
+| **tests/integration/test_fastapi_calculator.py** | Integration tests for API endpoints.                                                |
+| **tests/e2e/test_e2e.py**                        | End-to-end Playwright tests simulating real user behavior.                          |
+| **Dockerfile**                                   | Defines how the Docker image is built for the application.                          |
+| **docker-compose.yml**                           | Manages and runs the application in a containerized environment.                    |
+| **main.py**                                      | Main FastAPI entry point for backend and frontend routes.                           |
+| **pytest.ini**                                   | Configures test behavior, coverage, and warnings.                                   |
+| **requirements.txt**                             | Lists project dependencies.                                                         |
 
 ---
 
-##  **Setup and Installation**
+## **Setup and Installation**
 
-### ** Clone the Repository**
+### **1. Clone the Repository**
 
 ```bash
 git clone https://github.com/nandanksingh/IS601_Assignment8.git
 cd IS601_Assignment8
 ```
 
-### ** Create and Activate Virtual Environment**
+### **2. Create and Activate Virtual Environment**
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-### ** Install Dependencies**
+### **3. Install Dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### ** Run the FastAPI Application**
+### **4. Run the FastAPI Application**
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Then open the browser:
+Then open your browser at:
 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
 ---
 
-##  **Running with Docker**
+## **Running with Docker**
 
-You can also containerize and run the app using Docker.
+This project is fully containerized for portability and deployment consistency.
 
-### **Build and Run Container**
+### **1. Build and Run using Docker Compose**
 
 ```bash
 docker-compose up --build
 ```
 
-### **Stop the Container**
+Access the app at:
+👉 **[http://localhost:8000](http://localhost:8000)**
+
+### **2. Stop the Container**
 
 ```bash
 docker-compose down
 ```
 
-Once the container is running, access the application via:
-👉 **[http://localhost:8000](http://localhost:8000)**
-
 ---
 
-##  **Understanding How It Works**
+## **Published Docker Image**
 
-### **Backend (FastAPI)**
+The pre-built image is available publicly on **Docker Hub**:
 
-Handles computation and serves results as JSON:
+🔗 **Docker Hub Repository:**
+[https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator](https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator)
 
-```python
-@app.post("/add")
-async def add_numbers(numbers: Numbers):
-    result = add(numbers.a, numbers.b)
-    logger.info(f"Addition performed: {numbers.a} + {numbers.b} = {result}")
-    return {"result": result}
+### **Pull the Image**
+
+```bash
+docker pull nandanksingh/module8_fastapi_calculator:latest
 ```
 
-### **Frontend (index.html)**
+### **Run the Container**
 
-Collects user input, sends API requests, and displays results:
-
-```javascript
-async function calculate(operation) {
-    const a = document.getElementById("a").value;
-    const b = document.getElementById("b").value;
-    const response = await fetch(`/${operation}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ a: parseFloat(a), b: parseFloat(b) })
-    });
-    const data = await response.json();
-    document.getElementById("result").innerText = `Result: ${data.result}`;
-}
+```bash
+docker run -d -p 8000:8000 nandanksingh/module8_fastapi_calculator:latest
 ```
+
+### **Verify the Deployment**
+
+* Web App: [http://localhost:8000](http://localhost:8000)
+* Health Check: [http://localhost:8000/health](http://localhost:8000/health)
 
 ---
-
 
 ## **Testing and Code Coverage**
 
-The project includes **unit**, **integration**, and **E2E** tests.
+The project includes **Unit**, **Integration**, and **E2E** tests.
+All tests run automatically via **GitHub Actions** using the workflow file
+`.github/workflows/test.yml`, which enforces a **90% coverage threshold**.
 
-### **Run All Tests**
+---
+
+### ** Test Execution Commands**
+
+#### **Run All Tests (Unit + Integration + E2E)**
 
 ```bash
-pytest -v --cov=app --cov-report=term-missing
+pytest -v --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90
 ```
 
-### **Run Only E2E Tests**
+#### **Run Only Unit + Integration Tests**
+
+```bash
+pytest -m "not e2e" --cov=app --cov=main
+```
+
+#### **Run Only E2E Tests (Playwright)**
 
 ```bash
 pytest -m "e2e" --headed -v
 ```
 
-**Test Breakdown**
+---
 
-| Test Type         | Location            | Description                                   |
-| ----------------- | ------------------- | --------------------------------------------- |
-| Unit Tests        | `tests/unit`        | Verify arithmetic functions individually      |
-| Integration Tests | `tests/integration` | Validate FastAPI endpoints and responses      |
-| End-to-End Tests  | `tests/e2e`         | Simulate browser interactions with Playwright |
+### ** Test Categories**
 
-**Final Coverage:** **100%**
+| Test Type             | Location            | Description                                          |
+| --------------------- | ------------------- | ---------------------------------------------------- |
+| **Unit Tests**        | `tests/unit`        | Validate arithmetic logic in `operations.py`         |
+| **Integration Tests** | `tests/integration` | Verify FastAPI API routes and JSON responses         |
+| **End-to-End Tests**  | `tests/e2e`         | Simulate browser-based interactions using Playwright |
 
 ---
 
+### ** Coverage Summary**
 
-The workflow ensures:
+| Category                         | Coverage         | Status    |
+| -------------------------------- | ---------------- | --------- |
+| **Unit Tests**                   | 100%             |  Passed   |
+| **Integration Tests**            | 100%             |  Passed   |
+| **End-to-End Tests**             | Functional       |  Passed   |
 
-* All tests pass before merging
-* Code quality and coverage remain consistent
-* CI pipeline visible in **GitHub Actions tab**
-
----
-##  **Reflection**
-
-This project provided hands-on experience with **modern web application architecture** using **FastAPI** and **Python**.
-I learned how **unit, integration, and E2E testing** work together to ensure reliability, and how **GitHub Actions** automates the testing process for continuous integration.
-Dockerization improved my understanding of containerized development environments, ensuring consistent builds across systems.
-
-Achieving **100% code coverage** strengthened my understanding of **test-driven development (TDD)** and professional software workflows.
 
 ---
 
-##  **Technology Stack**
+### ** GitHub Actions Workflow Highlights**
 
-| Category         | Tools                   |
-| ---------------- | ----------------------- |
-| Language         | Python 3.12             |
-| Framework        | FastAPI                 |
-| Frontend         | HTML5, CSS3, JavaScript |
-| Testing          | Pytest, Playwright      |
-| CI/CD            | GitHub Actions          |
-| Containerization | Docker, Docker Compose  |
-| Server           | Uvicorn                 |
-| Logging          | Python logging module   |
+| Stage        | Description                                                   |
+| ------------ | ------------------------------------------------------------- |
+| **Test**     | Runs Unit + Integration + E2E tests                           |
+| **Security** | Performs vulnerability scanning using Trivy                   |
+| **Deploy**   | Builds and pushes verified Docker image to Docker Hub         |
+
+Sample command from workflow:
+
+```yaml
+pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
+pytest -m "e2e" --headed -v
+```
+
+---
+
+## **Reflection**
+
+This project provided practical experience with **modern web development workflows** integrating:
+
+* FastAPI for backend APIs
+* Pytest and Playwright for multi-level testing
+* Docker for consistent environment deployment
+* GitHub Actions for CI/CD automation
+
+Achieving **100% unit and integration coverage**, with **functional E2E tests**, helped strengthen my understanding of test-driven development and DevOps best practices.
+
+---
+
+## **Technology Stack**
+
+| Category         | Tools                  |
+| ---------------- | ---------------------- |
+| Language         | Python 3.12            |
+| Framework        | FastAPI                |
+| Frontend         | HTML, CSS, JavaScript  |
+| Testing          | Pytest, Playwright     |
+| CI/CD            | GitHub Actions         |
+| Containerization | Docker, Docker Compose |
+| Deployment       | Docker Hub             |
+| Logging          | Python Logging Module  |
+| Server           | Uvicorn                |
 
 ---
 
 ## **Conclusion**
 
-The **FastAPI Calculator** is a fully functional and tested web application that integrates modern **web development**, **testing**, and **CI/CD** practices.
-It serves as a strong foundation for more complex API-driven applications in real-world scenarios.
-
----
-
+The **FastAPI Calculator** is a fully functional and containerized web application that demonstrates the integration of **FastAPI**, **Pytest**, **Playwright**, and **Docker** with **automated CI/CD**.

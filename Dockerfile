@@ -6,12 +6,10 @@
 # ----------------------------------------------------------
 # Description:
 # Dockerfile for building and running the FastAPI Calculator app.
-# Combines efficiency, security, and simplicity for classroom
-# and CI/CD environments. Uses non-root user and includes healthcheck.
+# Optimized for CI/CD and classroom grading – lightweight and clean.
 # ----------------------------------------------------------
 
-# Base image
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 # Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -25,31 +23,25 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends build-essential curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user for security
+# Create non-root user
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
-# Copy dependency file first (improves build caching)
+# Copy dependency list and install Python packages
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy application source code
+# Copy application code
 COPY . .
 
-# Adjust ownership for non-root user
+# Adjust permissions
 RUN chown -R appuser:appgroup /app
-
-# Switch to non-root user
 USER appuser
 
-# Expose FastAPI port
+# Expose port and add healthcheck
 EXPOSE 8000
-
-# Healthcheck for container monitoring
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8000 || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Default command to run FastAPI app
+# Default command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
