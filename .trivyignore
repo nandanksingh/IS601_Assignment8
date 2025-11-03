@@ -1,20 +1,4 @@
-# ----------------------------------------------------------
-# Author: Nandan Kumar
-# Date: 11/02/2025
-# Assignment-8: FastAPI Calculator
-# File: .trivyignore
-# ----------------------------------------------------------
-# Description:
-# This file tells Trivy to ignore known, non-exploitable CVEs
-# within FastAPI–Starlette–h11 dependency chain.
-# ----------------------------------------------------------
-
-# Ignore known Starlette vulnerabilities (<0.42.0)
 CVE-2024-47885
 CVE-2025-62727
 CVE-2025-54121
-
-# Ignore h11 dependency false-positive
 CVE-2025-43859
-
-
