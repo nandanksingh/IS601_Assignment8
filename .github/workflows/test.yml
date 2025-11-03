@@ -66,7 +66,6 @@ jobs:
         run: |
           source venv/bin/activate
           pytest -m e2e --no-cov --disable-warnings -v
-
   # --------------------------------------------------------
   #  SECURITY JOB — Docker vulnerability scanning
   # --------------------------------------------------------
@@ -87,11 +86,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'fastapi-calculator:test'
-          trivy-config: '.trivyignore'     
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
           format: 'table'
           exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
 
   # --------------------------------------------------------
   #  DEPLOY JOB — Build & push Docker image to DockerHub
