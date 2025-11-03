@@ -1,4 +1,3 @@
-# type: ignore file
 # ----------------------------------------------------------
 # Author: Nandan Kumar
 # Date: 11/02/2025
@@ -7,27 +6,15 @@
 # ----------------------------------------------------------
 # Description:
 # This file tells Trivy to ignore known, non-exploitable CVEs
-# that are safe within the FastAPI–Starlette–h11 dependency chain.
-# All other vulnerabilities have been patched via requirements.txt.
-#
-# Note:
-# The "# type: ignore file" directive prevents VS Code/Pylance
-# from interpreting this file as Python code, removing the
-# “CVE is not defined” warnings.
+# within FastAPI–Starlette–h11 dependency chain.
 # ----------------------------------------------------------
 
-# ----------------------------------------------------------
-# Starlette <0.42.0 (pinned by FastAPI 0.115.4)
-# Verified non-exploitable within current FastAPI version.
-# ----------------------------------------------------------
+# Ignore known Starlette vulnerabilities (<0.42.0)
 CVE-2024-47885
 CVE-2025-62727
 CVE-2025-54121
 
-# ----------------------------------------------------------
-# h11 0.14.0 (pinned for httpcore==1.0.6)
-# Upgrading breaks FastAPI and uvicorn dependency chain.
-# Verified as non-exploitable for this limited calculator app.
-# ----------------------------------------------------------
+# Ignore h11 dependency false-positive
 CVE-2025-43859
+
 
