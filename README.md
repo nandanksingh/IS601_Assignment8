@@ -7,90 +7,87 @@
 
 ## **Project Overview**
 
-This project implements a **FastAPI-based web calculator** that performs four basic arithmetic operations—**addition**, **subtraction**, **multiplication**, and **division**—through a modern web interface and RESTful API endpoints.
+This project implements a **FastAPI-based web calculator** that performs four basic arithmetic operations — **addition**, **subtraction**, **multiplication**, and **division** — through a modern web interface and RESTful API endpoints.
 
-It demonstrates the **complete web development lifecycle**, from backend and frontend integration to **automated testing**, **logging**, **containerization**, and **continuous integration (CI)** using **GitHub Actions** and **Docker**.
+It demonstrates the **end-to-end web development process**, including **backend development**, **frontend integration**, **automated testing**, **logging**, **security scanning**, **containerization**, and **continuous integration (CI/CD)** using **GitHub Actions** and **Docker**.
 
 ---
 
 ## **Learning Objectives**
 
-Through this assignment, I learned to:
+Through this project, I learned to:
 
-* Develop a **FastAPI** web application with RESTful API endpoints
-* Integrate **frontend (HTML, CSS, JavaScript)** with backend logic
-* Implement **unit**, **integration**, and **end-to-end (E2E)** testing using **Pytest** and **Playwright**
-* Add **structured logging** for monitoring and debugging
-* Manage version control using **Git and GitHub**
-* Automate workflows with **GitHub Actions**
-* Containerize and deploy the application using **Docker and Docker Compose**
+* Build and test web applications using **FastAPI**
+* Connect backend and frontend components effectively
+* Write **unit**, **integration**, and **end-to-end (E2E)** tests using **Pytest** and **Playwright**
+* Apply structured **logging** for monitoring and debugging
+* Automate workflows using **GitHub Actions**
+* Containerize and deploy applications using **Docker**
+* Perform **security vulnerability scanning** using **Trivy**
 
 ---
 
 ## **Application Structure**
 
-| File                                             | Description                                                                         |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| **app/operations.py**                            | Contains arithmetic functions and validation logic with error handling and logging. |
-| **templates/index.html**                         | Frontend calculator UI with JavaScript-based interaction.                           |
-| **tests/unit/test_calculator.py**                | Unit tests for arithmetic operations.                                               |
-| **tests/integration/test_fastapi_calculator.py** | Integration tests for API endpoints.                                                |
-| **tests/e2e/test_e2e.py**                        | End-to-end Playwright tests simulating real user behavior.                          |
-| **Dockerfile**                                   | Defines how the Docker image is built for the application.                          |
-| **docker-compose.yml**                           | Manages and runs the application in a containerized environment.                    |
-| **main.py**                                      | Main FastAPI entry point for backend and frontend routes.                           |
-| **pytest.ini**                                   | Configures test behavior, coverage, and warnings.                                   |
-| **requirements.txt**                             | Lists project dependencies.                                                         |
+| File                                             | Description                         |
+| ------------------------------------------------ | ----------------------------------- |
+| **app/operations.py**                            | Core arithmetic logic and logging   |
+| **templates/index.html**                         | Frontend calculator UI              |
+| **tests/unit/test_calculator.py**                | Unit tests for operations           |
+| **tests/integration/test_fastapi_calculator.py** | Integration tests for API endpoints |
+| **tests/e2e/test_e2e.py**                        | End-to-end Playwright tests         |
+| **Dockerfile**                                   | Defines Docker build instructions   |
+| **main.py**                                      | FastAPI entry point                 |
+| **pytest.ini**                                   | Test and coverage settings          |
+| **requirements.txt**                             | Python dependency list              |
 
 ---
 
 ## **Setup and Installation**
 
-### **1. Clone the Repository**
+### ** Clone the Repository**
 
 ```bash
 git clone https://github.com/nandanksingh/IS601_Assignment8.git
 cd IS601_Assignment8
 ```
 
-### **2. Create and Activate Virtual Environment**
+### ** Create and Activate Virtual Environment**
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-### **3. Install Dependencies**
+### ** Install Dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### **4. Run the FastAPI Application**
+### ** Run the Application**
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Then open your browser at:
-👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
+Open in your browser → **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
 ---
 
 ## **Running with Docker**
 
-This project is fully containerized for portability and deployment consistency.
-
-### **1. Build and Run using Docker Compose**
+### ** Build and Run the Container**
 
 ```bash
 docker-compose up --build
 ```
 
-Access the app at:
-👉 **[http://localhost:8000](http://localhost:8000)**
+### ** Access the Application**
 
-### **2. Stop the Container**
+ [http://localhost:8000](http://localhost:8000)
+
+### ** Stop the Container**
 
 ```bash
 docker-compose down
@@ -100,10 +97,9 @@ docker-compose down
 
 ## **Published Docker Image**
 
-The pre-built image is available publicly on **Docker Hub**:
+The image is publicly available on **Docker Hub**:
 
-🔗 **Docker Hub Repository:**
-[https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator](https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator)
+🔗 [https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator](https://hub.docker.com/r/nandanksingh/module8_fastapi_calculator)
 
 ### **Pull the Image**
 
@@ -117,110 +113,140 @@ docker pull nandanksingh/module8_fastapi_calculator:latest
 docker run -d -p 8000:8000 nandanksingh/module8_fastapi_calculator:latest
 ```
 
-### **Verify the Deployment**
+### **Verify Deployment**
 
-* Web App: [http://localhost:8000](http://localhost:8000)
-* Health Check: [http://localhost:8000/health](http://localhost:8000/health)
+* Web App → [http://localhost:8000](http://localhost:8000)
+* Health Endpoint → [http://localhost:8000/health](http://localhost:8000/health)
 
 ---
 
-## **Testing and Code Coverage**
+## **Testing and Coverage**
 
 The project includes **Unit**, **Integration**, and **E2E** tests.
-All tests run automatically via **GitHub Actions** using the workflow file
-`.github/workflows/test.yml`, which enforces a **90% coverage threshold**.
+All tests are executed automatically via **GitHub Actions**, ensuring a **minimum of 90% coverage**.
 
----
-
-### ** Test Execution Commands**
-
-#### **Run All Tests (Unit + Integration + E2E)**
+### **Test Commands**
 
 ```bash
+# Run all tests with coverage
 pytest -v --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90
-```
 
-#### **Run Only Unit + Integration Tests**
-
-```bash
+# Run only unit + integration tests
 pytest -m "not e2e" --cov=app --cov=main
+
+# Run only E2E tests (Playwright)
+pytest -m "e2e" --headed -v
 ```
 
-#### **Run Only E2E Tests (Playwright)**
+---
+
+### **Coverage Summary**
+
+| Category          | Coverage   |Status   |
+| ----------------- | ---------- |-------- |
+| Unit Tests        | 100%       |  Passed |
+| Integration Tests | 100%       |  Passed |
+| End-to-End Tests  | Functional |  Passed |
+
+---
+
+##  **Security Validation (Trivy Scan)**
+
+The Docker image `fastapi-calculator:test` was scanned using **Trivy** to detect vulnerabilities in both the application and system layers.
+
+### **Scan Command Used**
 
 ```bash
-pytest -m "e2e" --headed -v
+trivy image --ignorefile .trivyignore --show-suppressed fastapi-calculator:test
 ```
 
----
+### **Results Summary**
 
-### ** Test Categories**
+* **Python packages:** 0 vulnerabilities (CRITICAL/HIGH/MEDIUM)
+* **Suppressed CVEs:** Known, non-exploitable Starlette/h11 issues ignored via `.trivyignore`
+* **System CVEs:** Found in Debian base image (kernel-related, non-exploitable)
 
-| Test Type             | Location            | Description                                          |
-| --------------------- | ------------------- | ---------------------------------------------------- |
-| **Unit Tests**        | `tests/unit`        | Validate arithmetic logic in `operations.py`         |
-| **Integration Tests** | `tests/integration` | Verify FastAPI API routes and JSON responses         |
-| **End-to-End Tests**  | `tests/e2e`         | Simulate browser-based interactions using Playwright |
+### **Security Assurance**
 
----
+The application runs as a **non-root user** in the container.
+All known issues in the **FastAPI–Starlette–h11** dependency chain were reviewed and marked safe.
+Remaining CVEs belong to the Debian base image and are **not exploitable** in this setup.
 
-### ** Coverage Summary**
-
-| Category                         | Coverage         | Status    |
-| -------------------------------- | ---------------- | --------- |
-| **Unit Tests**                   | 100%             |  Passed   |
-| **Integration Tests**            | 100%             |  Passed   |
-| **End-to-End Tests**             | Functional       |  Passed   |
-
+**Final Security Status:**  *No active high or critical vulnerabilities detected.*
 
 ---
 
-### ** GitHub Actions Workflow Highlights**
+## **CI/CD Pipeline Status**
 
-| Stage        | Description                                                   |
-| ------------ | ------------------------------------------------------------- |
-| **Test**     | Runs Unit + Integration + E2E tests                           |
-| **Security** | Performs vulnerability scanning using Trivy                   |
-| **Deploy**   | Builds and pushes verified Docker image to Docker Hub         |
+All three stages in the GitHub Actions workflow passed successfully:
 
-Sample command from workflow:
+| Stage         | Result | Description                              |
+| --------------| ------ | ---------------------------------------- |
+|  **Test**     | Passed | Unit + Integration + E2E tests           |
+|  **Security** | Passed | Trivy vulnerability scan                 |
+|  **Deploy**   | Passed | Docker image built & pushed to DockerHub |
 
-```yaml
-pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
-pytest -m "e2e" --headed -v
+---
+
+### **Deployment Confirmation**
+
+After the CI/CD pipeline completed:
+
+1. The Docker image was automatically pushed to DockerHub.
+2. Deployment was verified by pulling the image and running it locally:
+
+   ```bash
+   docker pull nandanksingh/module8_fastapi_calculator:latest
+   docker run -d -p 8000:8000 nandanksingh/module8_fastapi_calculator:latest
+   ```
+3. The `/health` endpoint returned:
+
+   ```json
+   {"status": "ok", "message": "FastAPI Calculator is running smoothly."}
+   ```
+
+**Final Verification:** Application, tests, and security scans all passed successfully.
+
+---
+
+## **CI/CD Status Badge**
+
+Add this badge to your repository for visual pipeline status:
+
+```markdown
+![CI/CD](https://github.com/nandanksingh/IS601_Assignment8/actions/workflows/test.yml/badge.svg)
 ```
 
----
-
-## **Reflection**
-
-This project provided practical experience with **modern web development workflows** integrating:
-
-* FastAPI for backend APIs
-* Pytest and Playwright for multi-level testing
-* Docker for consistent environment deployment
-* GitHub Actions for CI/CD automation
-
-Achieving **100% unit and integration coverage**, with **functional E2E tests**, helped strengthen my understanding of test-driven development and DevOps best practices.
+> Automated CI/CD pipeline includes Unit Testing, E2E Testing (Playwright),
+> Trivy vulnerability scanning, and DockerHub deployment.
 
 ---
 
 ## **Technology Stack**
 
-| Category         | Tools                  |
-| ---------------- | ---------------------- |
-| Language         | Python 3.12            |
-| Framework        | FastAPI                |
-| Frontend         | HTML, CSS, JavaScript  |
-| Testing          | Pytest, Playwright     |
-| CI/CD            | GitHub Actions         |
-| Containerization | Docker, Docker Compose |
-| Deployment       | Docker Hub             |
-| Logging          | Python Logging Module  |
-| Server           | Uvicorn                |
+| Category         | Tools              |
+| ---------------- | ------------------ |
+| Language         | Python 3.12        |
+| Framework        | FastAPI            |
+| Testing          | Pytest, Playwright |
+| CI/CD            | GitHub Actions     |
+| Security         | Trivy              |
+| Containerization | Docker             |
+| Deployment       | Docker Hub         |
+| Logging          | Python Logging     |
+| Server           | Uvicorn            |
+
+---
+
+## **Reflection**
+
+This project gave me hands-on experience with **modern DevOps workflows** — combining **testing, security scanning, and automated deployment** in one pipeline.
+Building this calculator with FastAPI helped me understand **web APIs**, while integrating **Trivy and GitHub Actions** strengthened my knowledge of **secure software delivery**.
 
 ---
 
 ## **Conclusion**
 
-The **FastAPI Calculator** is a fully functional and containerized web application that demonstrates the integration of **FastAPI**, **Pytest**, **Playwright**, and **Docker** with **automated CI/CD**.
+The **FastAPI Calculator** is a secure, containerized, and fully automated application that demonstrates the real-world integration of **FastAPI**, **Pytest**, **Playwright**, **Trivy**, and **Docker** in a professional CI/CD pipeline.
+
+
