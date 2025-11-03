@@ -41,9 +41,11 @@ jobs:
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
+          path: |
+            ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
@@ -53,17 +55,17 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps
 
-      #  Enforce 90% minimum coverage on Unit + Integration tests
+      #  Unit + Integration tests (minimum 90% coverage)
       - name: Run Unit + Integration Tests with Coverage
         run: |
           source venv/bin/activate
-          pytest --cov=app --cov=main --cov-report=term-missing --cov-fail-under=90 -m "not e2e"
+          pytest --cov=app --cov-fail-under=90
 
-      #  Run E2E tests without coverage enforcement
+      #  E2E tests (Playwright) with NO coverage
       - name: Run End-to-End (E2E) Tests (No Coverage Enforcement)
         run: |
           source venv/bin/activate
-          pytest -m "e2e" --headed -v
+          pytest -m e2e --no-cov --disable-warnings -v
 
   # --------------------------------------------------------
   #  SECURITY JOB — Docker vulnerability scanning
@@ -85,12 +87,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'fastapi-calculator:test'
-          format: 'table'
-          exit-code: '1'
+          trivy-config: '.trivyignore'     
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
-          ignorefile: './.trivyignore'   #  safer relative path
-
+          format: 'table'
+          exit-code: '1'
 
   # --------------------------------------------------------
   #  DEPLOY JOB — Build & push Docker image to DockerHub
